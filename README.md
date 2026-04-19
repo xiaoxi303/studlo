@@ -72,7 +72,7 @@
 ## ✦ 项目结构
 
 ```
-bolg/
+STUDIO/
 │
 ├── 📁 app/                      # Next.js App Router 核心
 │   ├── globals.css              # 全局样式 · CSS 变量系统
@@ -221,7 +221,7 @@ ScrollTrigger (位置监听)
 
 <br/>
 
-[![Made with ❤️](https://img.shields.io/badge/Made_with-❤️-ff4757?style=flat-square)](https://github.com/your-username/bolg)
+[![Made with ❤️](https://img.shields.io/badge/Made_with-❤️-ff4757?style=flat-square)](https://github.com/xiaoxi303/STUDIO)
 [![Next.js](https://img.shields.io/badge/Powered_by-Next.js-000000?style=flat-square&logo=nextdotjs)](https://nextjs.org/)
 [![GSAP](https://img.shields.io/badge/Animated_by-GSAP-88CE02?style=flat-square)](https://gsap.com/)
 
