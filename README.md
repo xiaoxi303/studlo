@@ -138,11 +138,13 @@ npm run dev
 # 生产构建 (标准)
 npm run build
 
+# Cloudflare 适配构建 (OpenNext)
+npm run build:cf
+
 # 部署至 Cloudflare
-# 该命令会自动运行构建并将其推送至 Cloudflare Workers/Pages
 npm run deploy
 
-# 本地预览 Cloudflare 版本
+# 本地预览 Cloudflare 产物
 npm run preview
 
 # 代码检查
@@ -155,13 +157,13 @@ npm run lint
 本项目采用 **OpenNext (Cloudflare Adapter)** 架构，以确保 Next.js 16 的所有功能（包括 App Router 和边缘渲染）在 Cloudflare Pages 上完美运行。
 
 ### 配置说明
-- **Framework Preset**: 在 Cloudflare 控制台中选择 `Next.js` 或保持 `None`。
-- **Build Command**: `npm run build`
-- **Output Directory**: `.open-next/assets` (静态资源) 与 `.open-next/worker.js` (运行逻辑)。
-- **Compatibility Flags**: 必须开启 `nodejs_compat`。
+- **Framework Preset**: 在 Cloudflare 控制台中选择 `Next.js` 或 `None`。
+- **Build Command**: `npm run build:cf` (已在 package.json 优化以防止循环构建)
+- **Output Directory**: `.open-next/assets` (静态资源) 与 `.open-next/worker.js` (边缘逻辑)。
+- **Compatibility Flags**: 必须在 Dashboard 中开启 `nodejs_compat`。
 
 ### 自动化部署
-已配置 `wrangler.jsonc`，通过 Git 推送至 `main` 分支即可触发 Cloudflare Pages 的自动构建与部署。
+已配置 `wrangler.jsonc`，通过 Git 推送至 `main` 分支即可自动触发。
 ```
 
 <br/>
