@@ -15,8 +15,9 @@
 
 <br/>
 
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.2-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![GSAP](https://img.shields.io/badge/GSAP-3.12-88CE02?style=for-the-badge&logo=greensock&logoColor=white)](https://gsap.com/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Lenis](https://img.shields.io/badge/Lenis-Smooth_Scroll-ffffff?style=for-the-badge)](https://lenis.darkroom.engineering/)
@@ -138,6 +139,7 @@ npm run dev
 npm run build
 
 # 部署至 Cloudflare
+# 该命令会自动运行构建并将其推送至 Cloudflare Workers/Pages
 npm run deploy
 
 # 本地预览 Cloudflare 版本
@@ -145,6 +147,21 @@ npm run preview
 
 # 代码检查
 npm run lint
+
+<br/>
+
+## ✦ Cloudflare 部署指南
+
+本项目采用 **OpenNext (Cloudflare Adapter)** 架构，以确保 Next.js 16 的所有功能（包括 App Router 和边缘渲染）在 Cloudflare Pages 上完美运行。
+
+### 配置说明
+- **Framework Preset**: 在 Cloudflare 控制台中选择 `Next.js` 或保持 `None`。
+- **Build Command**: `npm run build`
+- **Output Directory**: `.open-next/assets` (静态资源) 与 `.open-next/worker.js` (运行逻辑)。
+- **Compatibility Flags**: 必须开启 `nodejs_compat`。
+
+### 自动化部署
+已配置 `wrangler.jsonc`，通过 Git 推送至 `main` 分支即可触发 Cloudflare Pages 的自动构建与部署。
 ```
 
 <br/>
