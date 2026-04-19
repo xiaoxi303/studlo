@@ -15,7 +15,7 @@
 
 <br/>
 
-[![Next.js](https://img.shields.io/badge/Next.js-14-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![GSAP](https://img.shields.io/badge/GSAP-3.12-88CE02?style=for-the-badge&logo=greensock&logoColor=white)](https://gsap.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
@@ -60,12 +60,13 @@
 
 | 层级 | 技术 | 版本 | 用途 |
 |:---:|:---|:---:|:---|
-| **框架** | Next.js (App Router) | 14.2.3 | 服务端渲染 · 路由管理 |
+| **框架** | Next.js (App Router) | 16.2.4 | 服务端渲染 · 路由管理 |
 | **动画** | GSAP + ScrollTrigger | 3.12.5 | 滚动驱动动画引擎 |
 | **滚动** | Lenis | 1.3.23 | 物理惯性平滑滚动 |
 | **样式** | TailwindCSS | 3.4.3 | 原子化 CSS 工具集 |
+| **部署** | Cloudflare Pages | OpenNext | 边缘计算 · 高速交付 |
 | **语言** | TypeScript | 5.x | 类型安全开发 |
-| **运行时** | React | 18.x | UI 组件化渲染 |
+| **运行时** | React | 19.x | UI 组件化渲染 |
 
 <br/>
 
@@ -133,11 +134,14 @@ npm run dev
 ### 其他命令
 
 ```bash
-# 构建生产版本
+# 生产构建 (标准)
 npm run build
 
-# 启动生产服务器
-npm run start
+# 部署至 Cloudflare
+npm run deploy
+
+# 本地预览 Cloudflare 版本
+npm run preview
 
 # 代码检查
 npm run lint
@@ -206,6 +210,8 @@ ScrollTrigger (位置监听)
 - ✅ Canvas 粒子系统帧率感知，低性能设备自动降级
 - ✅ `next/font` 字体预加载，消除布局偏移 (CLS)
 - ✅ 图片组件懒加载 + 优先级标注
+- ✅ Cloudflare 边缘计算 + OpenNext 架构，实现毫秒级首屏响应
+- ✅ 全量静态化预渲染，极致的 SEO 与访问速度
 
 <br/>
 
