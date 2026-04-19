@@ -118,8 +118,8 @@ bolg/
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/your-username/bolg.git
-cd bolg
+git clone https://github.com/xiaoxi303/STUDIO.git
+cd STUDIO
 
 # 2. 安装依赖
 npm install
