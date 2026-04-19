@@ -34,3 +34,8 @@ next-env.d.ts
 # Editor
 .vscode/
 .idea/
+
+# Cloudflare / OpenNext
+.open-next/
+.wrangler/
+.dev.vars
