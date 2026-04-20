@@ -3,133 +3,66 @@
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
-const SERVICES = [
-  {
-    num: "01",
-    title: "品牌数字化",
-    desc: "从战略定位到视觉语言，我们将品牌理念转化为极具感染力的数字符号与沉浸式体验。",
-    tags: ["品牌策略", "视觉系统", "动效语言"],
-  },
-  {
-    num: "02",
-    title: "创意开发",
-    desc: "融合 WebGL、GSAP 与现代前端工程，构建超越常规认知的交互体验与叙事型网站。",
-    tags: ["Next.js", "GSAP", "Three.js"],
-  },
-  {
-    num: "03",
-    title: "体验设计",
-    desc: "以用户心理学为基础，精细打磨每一个微交互与过渡时机，让每次点击都有仪式感。",
-    tags: ["UX 研究", "原型设计", "可用性测试"],
-  },
-  {
-    num: "04",
-    title: "性能工程",
-    desc: "在不妥协视觉表现的前提下，追求 Core Web Vitals 绿灯、LCP < 1s 的极致工程水准。",
-    tags: ["性能优化", "CDN 架构", "监控告警"],
-  },
+const TECH_STACK = [
+  { name: "Next.js", desc: "React 全栈框架，SSR/SSG 首选", category: "框架" },
+  { name: "GSAP", desc: "专业级动画引擎，毫秒级精度", category: "动效" },
+  { name: "Three.js", desc: "WebGL 3D 渲染，沉浸式视觉", category: "3D" },
+  { name: "Lenis", desc: "丝滑平滑滚动，原生般触感", category: "滚动" },
+  { name: "TailwindCSS", desc: "原子化 CSS，极速开发", category: "样式" },
+  { name: "Framer Motion", desc: "声明式动画，React 原生体验", category: "动效" },
+  { name: "TypeScript", desc: "强类型保障，零运行时错误", category: "语言" },
+  { name: "Vercel", desc: "边缘网络部署，全球 CDN 加速", category: "部署" },
 ];
 
 export default function Services() {
   const sectionRef = useRef<HTMLElement>(null);
-  const bgLineRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     if (!sectionRef.current) return;
 
-    // 背景装饰线展开
-    gsap.fromTo(bgLineRef.current,
-      { scaleY: 0 },
-      {
-        scaleY: 1,
-        ease: "none",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-          end: "bottom 20%",
-          scrub: true,
-        }
-      }
-    );
-
-    // 标题入场
-    gsap.from(".services-header", {
-      opacity: 0,
-      y: 60,
-      duration: 1.4,
-      ease: "power3.out",
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top 70%",
-      }
+    gsap.from(".tech-header", {
+      opacity: 0, y: 50, duration: 1.4, ease: "power3.out",
+      scrollTrigger: { trigger: sectionRef.current, start: "top 65%" }
     });
 
-    // 每行服务项：错落入场
-    gsap.from(".service-row", {
-      opacity: 0,
-      y: 50,
-      stagger: 0.18,
-      duration: 1.2,
-      ease: "power3.out",
-      scrollTrigger: {
-        trigger: ".services-grid",
-        start: "top 75%",
-      }
+    gsap.from(".tech-item", {
+      opacity: 0, y: 30, stagger: 0.06, duration: 1, ease: "power3.out",
+      scrollTrigger: { trigger: ".tech-grid", start: "top 70%" }
     });
-
   }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} className="relative bg-[#030303] py-32 md:py-48 px-6 md:px-20 overflow-hidden border-t border-white/[0.04]">
-      {/* 背景垂直装饰线 */}
-      <div
-        ref={bgLineRef}
-        className="absolute left-[50%] top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-white/[0.06] to-transparent origin-top scale-y-0 hidden md:block"
-      ></div>
-
+    <section ref={sectionRef} className="relative bg-[#0a0a0a] py-32 md:py-48 px-6 md:px-16 overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        {/* 标题区 */}
-        <div className="services-header mb-24 md:mb-32">
-          <p className="text-[10px] uppercase tracking-[0.5em] text-gray-600 mb-6">服务能力</p>
-          <h2 className="text-5xl md:text-7xl lg:text-[6rem] font-black tracking-tighter text-white leading-none uppercase">
-            我们能做<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-gray-700">什么</span>
-          </h2>
+        <div className="tech-header mb-20 md:mb-28 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+          <div>
+            <p className="text-label text-accent mb-5">技术栈</p>
+            <h2 className="text-display text-white">
+              我们的<br /><span className="text-white/40">武器库</span>
+            </h2>
+          </div>
+          <p className="text-muted text-sm md:text-base font-light max-w-md leading-relaxed">
+            我们精心挑选每一项技术，确保它在性能、开发体验和最终呈现之间达到完美平衡。没有冗余，只有精锐。
+          </p>
         </div>
 
-        {/* 服务列表 */}
-        <div className="services-grid divide-y divide-white/[0.06]">
-          {SERVICES.map((s) => (
+        <div className="tech-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {TECH_STACK.map((tech, i) => (
             <div
-              key={s.num}
-              className="service-row group flex flex-col md:flex-row md:items-start gap-6 md:gap-20 py-10 md:py-14 hover:bg-white/[0.01] transition-colors duration-500 cursor-none hover-target"
+              key={i}
+              className="tech-item group bg-white/[0.02] border border-white/[0.06] rounded-xl p-6 md:p-8 hover:border-white/20 hover:bg-white/[0.04] transition-all duration-700 cursor-none hover-target"
             >
-              {/* 序号 */}
-              <span className="text-xs text-gray-700 font-mono tracking-widest pt-1 flex-shrink-0 w-8">
-                {s.num}
-              </span>
-
-              {/* 标题 */}
-              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white tracking-tight flex-shrink-0 md:w-72 group-hover:text-gray-300 transition-colors duration-500">
-                {s.title}
-              </h3>
-
-              {/* 描述 */}
-              <p className="text-gray-500 text-base md:text-lg leading-relaxed font-light flex-1 group-hover:text-gray-400 transition-colors duration-500">
-                {s.desc}
-              </p>
-
-              {/* 标签 */}
-              <div className="flex flex-wrap gap-2 md:flex-col md:items-end md:justify-start flex-shrink-0">
-                {s.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-[10px] uppercase tracking-widest text-gray-700 border border-white/[0.06] px-3 py-1 rounded-full group-hover:border-white/20 group-hover:text-gray-400 transition-all duration-500"
-                  >
-                    {tag}
-                  </span>
-                ))}
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[10px] uppercase tracking-widest text-accent/60 border border-accent/20 px-2 py-0.5 rounded-full">
+                  {tech.category}
+                </span>
               </div>
+              <h3 className="text-xl md:text-2xl font-bold text-white tracking-tight mb-3 group-hover:text-accent transition-colors duration-500">
+                {tech.name}
+              </h3>
+              <p className="text-white/35 text-sm font-light leading-relaxed group-hover:text-white/55 transition-colors duration-500">
+                {tech.desc}
+              </p>
             </div>
           ))}
         </div>

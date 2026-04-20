@@ -8,30 +8,29 @@ const NAV_LINKS = [
   { label: "服务", href: "#services" },
   { label: "作品", href: "#projects" },
   { label: "流程", href: "#process" },
+  { label: "团队", href: "#team" },
 ];
 
 export default function Nav() {
   const navRef = useRef<HTMLElement>(null);
-  let lastScrollY = 0;
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     if (!navRef.current) return;
 
-    // Initial entrance
     gsap.fromTo(navRef.current,
       { opacity: 0, y: -20 },
-      { opacity: 1, y: 0, duration: 1.5, ease: "power3.out", delay: 3.2 }
+      { opacity: 1, y: 0, duration: 1.2, ease: "power3.out", delay: 3.5 }
     );
 
-    // Hide/show on scroll
     const handleScroll = () => {
       const currentY = window.scrollY;
-      if (currentY > lastScrollY && currentY > 100) {
+      if (currentY > lastScrollY.current && currentY > 100) {
         gsap.to(navRef.current, { y: -80, duration: 0.4, ease: "power2.inOut" });
       } else {
         gsap.to(navRef.current, { y: 0, duration: 0.4, ease: "power2.out" });
       }
-      lastScrollY = currentY;
+      lastScrollY.current = currentY;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -39,29 +38,29 @@ export default function Nav() {
   }, []);
 
   return (
-    <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 opacity-0">
-      {/* Logo */}
-      <a href="#" className="text-white font-black tracking-tighter text-lg uppercase cursor-none hover-target">
-        Studio<span className="text-gray-600">.</span>
+    <nav
+      ref={navRef}
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-5 opacity-0 mix-blend-difference"
+    >
+      <a href="#" className="text-white font-black tracking-tight text-xl uppercase cursor-none hover-target">
+        Studio<span className="text-white/40">.</span>
       </a>
 
-      {/* Links */}
-      <div className="hidden md:flex items-center gap-10">
+      <div className="hidden md:flex items-center gap-8">
         {NAV_LINKS.map((link) => (
           <a
             key={link.label}
             href={link.href}
-            className="text-gray-500 text-xs uppercase tracking-[0.2em] hover:text-white transition-colors duration-300 cursor-none hover-target"
+            className="text-white/60 text-xs uppercase tracking-[0.15em] hover:text-white transition-colors duration-300 cursor-none hover-target hover-line"
           >
             {link.label}
           </a>
         ))}
       </div>
 
-      {/* CTA */}
       <a
-        href="mailto:hello@studio.design"
-        className="text-xs uppercase tracking-[0.2em] text-gray-500 border border-white/10 px-5 py-2.5 hover:bg-white hover:text-black transition-all duration-300 cursor-none hover-target"
+        href="#contact"
+        className="text-xs uppercase tracking-[0.15em] text-white/60 border border-white/20 px-5 py-2 rounded-full hover:bg-white hover:text-black transition-all duration-500 cursor-none hover-target"
       >
         联系我们
       </a>

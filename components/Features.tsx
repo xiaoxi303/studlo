@@ -3,114 +3,144 @@
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
+const FEATURES = [
+  {
+    num: "01",
+    title: "品牌数字化",
+    desc: "从战略定位到视觉语言，将品牌理念转化为极具感染力的数字符号与沉浸式体验。每一像素，都承载品牌基因。",
+    tags: ["品牌策略", "视觉系统", "动效语言"],
+  },
+  {
+    num: "02",
+    title: "创意开发",
+    desc: "融合 WebGL、GSAP 与现代前端工程，构建超越常规认知的交互体验与叙事型网站。代码即艺术。",
+    tags: ["Next.js", "GSAP", "Three.js"],
+  },
+  {
+    num: "03",
+    title: "体验设计",
+    desc: "以用户心理学为基础，精细打磨每一个微交互与过渡时机，让每次点击都有仪式感，每次滑动都有节奏感。",
+    tags: ["UX 研究", "原型设计", "可用性测试"],
+  },
+  {
+    num: "04",
+    title: "性能工程",
+    desc: "在不妥协视觉表现的前提下，追求 Core Web Vitals 全绿、LCP < 1s 的极致工程水准。速度就是体验。",
+    tags: ["性能优化", "CDN 架构", "监控体系"],
+  },
+  {
+    num: "05",
+    title: "动效叙事",
+    desc: "用滚动驱动的视觉叙事取代传统布局。每一帧动画都经过精密编排，让内容自然流动，让情绪层层递进。",
+    tags: ["ScrollTrigger", "时间轴设计", "运动设计"],
+  },
+];
+
 export default function Features() {
   const sectionRef = useRef<HTMLElement>(null);
-  const bgRef = useRef<HTMLDivElement>(null);
-  const midRef = useRef<HTMLDivElement>(null);
-  const textLeftRef = useRef<HTMLHeadingElement>(null);
-  const textRightRef = useRef<HTMLHeadingElement>(null);
-  const descRef = useRef<HTMLParagraphElement>(null);
+  const watermarkRef = useRef<HTMLSpanElement>(null);
 
   useGSAP(() => {
     if (!sectionRef.current) return;
 
-    // 总 end = "+=220%"，所有 duration 加起来 = 6+ 单位，全程有内容
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
-        start: "top top",
-        end: "+=220%",
-        pin: true,
-        scrub: 1.5,
+        start: "top bottom",
+        end: "bottom top",
+        scrub: 1.2,
       }
     });
 
-    // ─── 阶段1：背景始终从头推进到底（duration 最长，贯穿全程）───
-    tl.fromTo(bgRef.current,
-      { scale: 1, opacity: 0.08 },
-      { scale: 1.6, opacity: 0.2, ease: "none", duration: 6 },
-      0
+    // 1. Watermark Constant Motion
+    tl.fromTo(watermarkRef.current,
+      { x: "10%", scale: 1 },
+      { x: "-10%", scale: 1.1, ease: "none" }
     );
 
-    // ─── 阶段1：内容入场 ── desc 从下进入 ───
-    tl.fromTo(descRef.current,
-      { opacity: 0, y: 40 },
-      { opacity: 1, y: 0, ease: "power2.out", duration: 1.2 },
-      0.2
-    );
+    // 2. Feature Header Fade
+    gsap.from(".features-header", {
+      opacity: 0,
+      y: 60,
+      duration: 1.4,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top 65%",
+      }
+    });
 
-    // ─── 阶段1：文字分别从两侧进入中央 ───
-    tl.fromTo(textLeftRef.current,
-      { opacity: 0, x: "-15vw" },
-      { opacity: 1, x: 0, ease: "power3.out", duration: 1.5 },
-      0
-    );
-    tl.fromTo(textRightRef.current,
-      { opacity: 0, x: "15vw" },
-      { opacity: 1, x: 0, ease: "power3.out", duration: 1.5 },
-      0.1
-    );
-
-    // ─── 阶段2：中层玻璃态扩张 ───
-    tl.fromTo(midRef.current,
-      { scale: 0.7, opacity: 0, borderRadius: "3rem" },
-      { scale: 1, opacity: 1, borderRadius: "1.5rem", ease: "power2.inOut", duration: 2 },
-      0.5
-    );
-    // 接着继续变化
-    tl.to(midRef.current,
-      { scale: 1.3, opacity: 0.3, borderRadius: "0rem", ease: "power2.in", duration: 2 },
-      2.5
-    );
-
-    // ─── 阶段2：文字停留后向两侧撕裂 ───
-    tl.to(textLeftRef.current,
-      { x: "-35vw", opacity: 0.1, ease: "power2.inOut", duration: 2.5 },
-      2
-    );
-    tl.to(textRightRef.current,
-      { x: "35vw", opacity: 0.1, ease: "power2.inOut", duration: 2.5 },
-      2
-    );
-
-    // ─── 阶段2：desc 淡出 ───
-    tl.to(descRef.current,
-      { opacity: 0, y: -30, ease: "power2.in", duration: 1.2 },
-      2.2
-    );
+    // 3. Staggered Row Entry
+    gsap.from(".feature-row", {
+      opacity: 0,
+      y: 50,
+      stagger: 0.15,
+      duration: 1.2,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: ".features-grid",
+        start: "top 75%",
+      }
+    });
 
   }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} className="h-screen w-full relative overflow-hidden bg-[#020202]">
-      {/* Background Layer */}
-      <div
-        ref={bgRef}
-        className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')] bg-cover bg-center opacity-10 filter grayscale mix-blend-screen will-change-transform"
-      ></div>
-
-      {/* Midground Layer */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-        <div
-          ref={midRef}
-          className="w-[70vw] md:w-[55vw] h-[55vh] border border-white/8 bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-[3px] rounded-[3rem] opacity-0 will-change-transform"
-        ></div>
+    <section
+      id="services"
+      ref={sectionRef}
+      className="relative py-32 md:py-48 px-6 md:px-16 overflow-hidden"
+      style={{ background: "var(--bg-light)", color: "#1a1a1a" }}
+    >
+      {/* Background Watermark with constant motion */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+        <span 
+          ref={watermarkRef}
+          className="text-[30vw] font-black text-black/[0.035] tracking-tighter uppercase leading-none whitespace-nowrap will-change-transform"
+        >
+          CAPABILITY 能力
+        </span>
       </div>
 
-      {/* Foreground Layer */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 mix-blend-difference z-20 pointer-events-none">
-        <div className="flex flex-col md:flex-row items-center justify-center w-full">
-          <h2 ref={textLeftRef} className="text-6xl md:text-8xl lg:text-[10rem] font-black tracking-tighter text-white uppercase leading-none will-change-transform opacity-0">
-            空间
-          </h2>
-          <h2 ref={textRightRef} className="text-6xl md:text-8xl lg:text-[10rem] font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-gray-500 to-gray-700 uppercase leading-none md:ml-12 will-change-transform opacity-0">
-            解构
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="features-header mb-20 md:mb-28">
+          <p className="text-label mb-5" style={{ color: "var(--accent)" }}>服务能力</p>
+          <h2 className="text-display !text-[#1a1a1a]">
+            我们能做<br /><span className="italic text-black/40">什么</span>
           </h2>
         </div>
 
-        <p ref={descRef} className="mt-12 text-gray-400 text-sm md:text-lg font-light tracking-[0.4em] uppercase max-w-2xl will-change-transform opacity-0">
-          打破二维边界，构建多维数字地景
-        </p>
+        <div className="features-grid divide-y divide-black/10">
+          {FEATURES.map((f) => (
+            <div
+              key={f.num}
+              className="feature-row group flex flex-col md:flex-row md:items-start gap-6 md:gap-16 py-10 md:py-14 hover:bg-black/[0.02] transition-colors duration-500 cursor-none hover-target"
+            >
+              <span className="text-xs font-mono tracking-widest text-black/30 pt-1.5 flex-shrink-0 w-8">
+                {f.num}
+              </span>
+
+              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1a1a1a] tracking-tight flex-shrink-0 md:w-64 group-hover:text-accent transition-colors duration-500">
+                {f.title}
+              </h3>
+
+              <p className="text-black/50 text-base md:text-lg leading-relaxed font-light flex-1 group-hover:text-black/70 transition-colors duration-500">
+                {f.desc}
+              </p>
+
+              <div className="flex flex-wrap gap-2 md:flex-col md:items-end md:justify-start flex-shrink-0">
+                {f.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-[10px] uppercase tracking-widest text-black/30 border border-black/10 px-3 py-1 rounded-full group-hover:border-black/30 group-hover:text-black/50 transition-all duration-500"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

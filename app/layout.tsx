@@ -5,11 +5,15 @@ import CustomCursor from "@/components/CustomCursor";
 import SmoothScroll from "@/components/SmoothScroll";
 import Loader from "@/components/Loader";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "STUDIO",
-  description: "A high-end scroll-driven storytelling experience.",
+  title: "STUDIO — 沉浸式数字体验",
+  description: "用极致克制的设计，讲述宏大的品牌故事。高端数字创意工作室。",
 };
 
 export default function RootLayout({
@@ -18,11 +22,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans bg-[#050505] text-white antialiased selection:bg-white selection:text-black`}>
+    <html lang="zh-CN" className="dark">
+      <body className={`${inter.variable} font-sans bg-dark text-white antialiased`}>
         <SmoothScroll>
           <Loader />
           <CustomCursor />
+          <div className="grain" aria-hidden="true" />
           {children}
         </SmoothScroll>
       </body>

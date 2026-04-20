@@ -5,100 +5,89 @@ import { gsap, useGSAP } from "@/lib/gsap";
 
 export default function DataSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const numberRef1 = useRef<HTMLSpanElement>(null);
-  const numberRef2 = useRef<HTMLSpanElement>(null);
+  const num1Ref = useRef<HTMLSpanElement>(null);
+  const num2Ref = useRef<HTMLSpanElement>(null);
+  const num3Ref = useRef<HTMLSpanElement>(null);
+  const num4Ref = useRef<HTMLSpanElement>(null);
   const bgGlowRef = useRef<HTMLDivElement>(null);
-  const dividerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     if (!sectionRef.current) return;
 
-    // end = "+=150%" —— 所有动画 duration 之和填满这个时长
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
         start: "top top",
-        end: "+=150%",
+        end: "+=3000",
         pin: true,
-        scrub: 1.5,
+        scrub: 1.2,
       }
     });
 
-    // ─── 背景光晕持续扩散（占位 + 气氛，贯穿全程）───
-    tl.fromTo(bgGlowRef.current,
-      { scale: 0.5, opacity: 0 },
-      { scale: 1.5, opacity: 1, ease: "none", duration: 5 },
+    // ─── 核心：背景永远在动 (Principle 2) ───
+    tl.fromTo(bgGlowRef.current, 
+      { scale: 0.5, opacity: 0, x: "-10%", rotate: -10 },
+      { scale: 2, opacity: 0.2, x: "10%", rotate: 10, duration: 15, ease: "none" },
       0
     );
 
-    // ─── 分割线从中间向两边展开 ───
-    tl.fromTo(dividerRef.current,
-      { scaleX: 0 },
-      { scaleX: 1, ease: "power2.inOut", duration: 1.5 },
+    // ─── 内容衔接 (Principle 3: No gaps) ───
+    tl.fromTo(".data-item",
+      { opacity: 0, y: 120, scale: 0.8 },
+      { opacity: 1, y: 0, scale: 1, stagger: 1, duration: 4, ease: "power3.out" },
       0
     );
 
-    // ─── 数字元素从底部升起 ───
-    tl.fromTo(".data-element",
-      { opacity: 0, y: 60 },
-      { opacity: 1, y: 0, stagger: 0.3, ease: "power3.out", duration: 1.5 },
-      0.2
-    );
+    // 数字增长 (跟手感)
+    tl.fromTo(num1Ref.current, { innerText: 0 }, { innerText: 100, snap: { innerText: 1 }, ease: "none", duration: 8 }, 1);
+    tl.fromTo(num2Ref.current, { innerText: 0 }, { innerText: 50, snap: { innerText: 1 }, ease: "none", duration: 8 }, 1);
+    tl.fromTo(num3Ref.current, { innerText: 0 }, { innerText: 24, snap: { innerText: 1 }, ease: "none", duration: 8 }, 1);
+    tl.fromTo(num4Ref.current, { innerText: 0 }, { innerText: 99, snap: { innerText: 1 }, ease: "none", duration: 8 }, 1);
 
-    // ─── 数字跟随滚动进度线性增长（ease: "none" 是关键）───
-    tl.fromTo(numberRef1.current,
-      { innerText: 0 },
-      { innerText: 100, snap: { innerText: 1 }, ease: "none", duration: 3 },
-      0.5
-    );
-    tl.fromTo(numberRef2.current,
-      { innerText: 0 },
-      { innerText: 24, snap: { innerText: 1 }, ease: "none", duration: 3 },
-      0.5
-    );
-
-    // ─── 数字停止后，整体微微缩小，制造"呼吸感结尾" ───
-    tl.to(".data-element",
-      { scale: 0.97, opacity: 0.7, ease: "power1.inOut", duration: 1 },
-      3.5
-    );
+    // 平滑退场 (而不是直接消失)
+    tl.to(".data-item", {
+      opacity: 0,
+      y: -100,
+      filter: "blur(20px)",
+      stagger: 0.5,
+      duration: 4,
+    }, 11);
 
   }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} className="h-screen bg-[#020202] flex flex-col md:flex-row items-center justify-around relative overflow-hidden">
-      {/* 持续扩散背景光晕 */}
-      <div
+    <section ref={sectionRef} className="h-screen bg-[#0a0a0a] flex items-center justify-center relative overflow-hidden">
+      {/* 永远在动的背景底层 */}
+      <div 
         ref={bgGlowRef}
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/[0.03] via-transparent to-transparent pointer-events-none opacity-0 will-change-transform"
-      ></div>
+        className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,106,74,0.15)_0%,transparent_70%)] pointer-events-none opacity-0 will-change-transform" 
+      />
 
-      {/* 垂直分割线 */}
-      <div
-        ref={dividerRef}
-        className="absolute top-1/4 bottom-1/4 left-1/2 -translate-x-1/2 w-[1px] bg-gradient-to-b from-transparent via-white/15 to-transparent hidden md:block origin-center scale-x-0 will-change-transform"
-      ></div>
-
-      {/* 数字 1 */}
-      <div className="data-element opacity-0 flex flex-col items-center mb-20 md:mb-0 z-10 mix-blend-difference will-change-transform">
-        <div className="flex items-end text-[8rem] md:text-[11rem] lg:text-[14rem] font-black tracking-tighter tabular-nums leading-none text-white">
-          <span ref={numberRef1}>0</span>
-          <span className="text-3xl md:text-5xl text-gray-700 mb-4 md:mb-8">%</span>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-8 max-w-7xl w-full px-8 z-10">
+        <div className="data-item opacity-0 text-center will-change-transform">
+          <div className="text-[5rem] md:text-[7rem] font-black tracking-tighter leading-none text-white tabular-nums">
+            <span ref={num1Ref}>0</span><span className="text-xl text-muted ml-1">+</span>
+          </div>
+          <p className="text-label text-muted mt-4">品牌项目交付</p>
         </div>
-        <p className="mt-6 text-gray-500 uppercase tracking-[0.5em] text-xs md:text-sm font-light">
-          性能极致优化
-        </p>
-      </div>
-
-      {/* 数字 2 */}
-      <div className="data-element opacity-0 flex flex-col items-center z-10 mix-blend-difference will-change-transform">
-        <div className="flex items-end text-[8rem] md:text-[11rem] lg:text-[14rem] font-black tracking-tighter tabular-nums leading-none text-white">
-          <span ref={numberRef2}>0</span>
-          <span className="text-3xl md:text-5xl text-gray-700 mb-4 md:mb-8">/7</span>
+        <div className="data-item opacity-0 text-center will-change-transform">
+          <div className="text-[5rem] md:text-[7rem] font-black tracking-tighter leading-none text-white tabular-nums">
+            <span ref={num2Ref}>0</span><span className="text-xl text-muted ml-1">+</span>
+          </div>
+          <p className="text-label text-muted mt-4">全球合作伙伴</p>
         </div>
-        <p className="mt-6 text-gray-500 uppercase tracking-[0.5em] text-xs md:text-sm font-light">
-          全天候稳定护航
-        </p>
+        <div className="data-item opacity-0 text-center will-change-transform">
+          <div className="text-[5rem] md:text-[7rem] font-black tracking-tighter leading-none text-white tabular-nums">
+            <span ref={num3Ref}>0</span><span className="text-xl text-muted ml-1">/7</span>
+          </div>
+          <p className="text-label text-muted mt-4">全天候技术支持</p>
+        </div>
+        <div className="data-item opacity-0 text-center will-change-transform">
+          <div className="text-[5rem] md:text-[7rem] font-black tracking-tighter leading-none text-white tabular-nums">
+            <span ref={num4Ref}>0</span><span className="text-xl text-muted ml-1">%</span>
+          </div>
+          <p className="text-label text-muted mt-4">客户满意度</p>
+        </div>
       </div>
     </section>
   );
