@@ -15,79 +15,74 @@ export default function Story() {
   useGSAP(() => {
     if (!containerRef.current) return;
 
-    // ─── 核心：超长轴主时间轴 (The Master Timeline) ───
+    // ─── 核心：超长轴主时间轴 (Scroll Progress Control) ───
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: "+=6000", // 极长轴，实现极致跟手感
+        end: "+=6000", // 极长轴
         pin: true,
         scrub: 1.2,
       }
     });
 
-    // ─── 核心技巧：永远让背景在动 (Principle 2) ───
-    // 从 0 秒开始一直动到 Timeline 结束 (假设总时长 15)
+    // ─── 核心修复：背景必须一直在动 (Principle: 持续背景动画) ───
+    // 贯穿整个 Timeline (总长设定为 20)
     tl.to(bgGlowRef.current, {
       scale: 2.5,
       opacity: 0.2,
       rotate: 45,
       x: "10%",
       y: "10%",
-      duration: 15,
-      ease: "none", // 匀速运动，模拟拖进度条
+      duration: 20,
+      ease: "none",
     }, 0);
 
     tl.to(gridRef.current, {
       opacity: 0.1,
       scale: 1.1,
-      y: -100,
-      duration: 15,
+      y: -150,
+      duration: 20,
       ease: "none",
     }, 0);
 
-    // ─── 内容衔接：所有内容“接进去”，不能断 (Principle 3) ───
+    // ─── 内容衔接 (无死角流动) ───
     
-    // 1. 第一句：进入
+    // 1. 第一句 (Entry -> Hold -> Fade)
     tl.fromTo(word1Ref.current,
       { opacity: 0, y: 150, filter: "blur(30px)", scale: 0.8 },
-      { opacity: 1, y: 0, filter: "blur(0px)", scale: 1, duration: 3, ease: "power2.out" },
+      { opacity: 1, y: 0, filter: "blur(0px)", scale: 1, duration: 4, ease: "power4.out" },
       0
     )
-    // 第一句：停留 + 微动
-    .to(word1Ref.current, { y: -20, opacity: 0.8, duration: 2 }, 3)
-    // 第一句：变淡退场
-    .to(word1Ref.current, { opacity: 0, y: -80, filter: "blur(20px)", duration: 2, ease: "power2.in" }, 5);
+    .to(word1Ref.current, { opacity: 1, duration: 2 }) // 保持 (Hold)
+    .to(word1Ref.current, { opacity: 0.3, y: -60, filter: "blur(15px)", duration: 2, ease: "power2.inOut" });
 
-    // 2. 第二句：提前开始衔接 ("-=")
+    // 2. 第二句 (提前衔接 "-=1")
     tl.fromTo(word2Ref.current,
       { opacity: 0, y: 120, filter: "blur(30px)", scale: 0.9 },
-      { opacity: 1, y: 0, filter: "blur(0px)", scale: 1, duration: 3, ease: "power2.out" },
-      "-=1.5" // 衔接点
-    )
-    // 第二句：停留
-    .to(word2Ref.current, { y: -20, opacity: 0.8, duration: 2 })
-    // 第二句：退场
-    .to(word2Ref.current, { opacity: 0, y: -80, filter: "blur(20px)", duration: 2, ease: "power2.in" }, "+=0.5");
-
-    // 3. 第三句：再次衔接
-    tl.fromTo(word3Ref.current,
-      { opacity: 0, y: 120, filter: "blur(30px)", scale: 0.9 },
-      { opacity: 1, y: 0, filter: "blur(0px)", scale: 1, duration: 3, ease: "power2.out" },
+      { opacity: 1, y: 0, filter: "blur(0px)", scale: 1, duration: 4, ease: "power4.out" },
       "-=1.5"
     )
-    // 第三句：高亮停留
-    .to(word3Ref.current, { scale: 1.05, duration: 3 });
+    .to(word2Ref.current, { opacity: 1, duration: 2 }) // 保持
+    .to(word2Ref.current, { opacity: 0.3, y: -60, filter: "blur(15px)", duration: 2, ease: "power2.inOut" });
 
-    // 4. 描述文字：伴随最后一句
+    // 3. 第三句 (再次衔接)
+    tl.fromTo(word3Ref.current,
+      { opacity: 0, y: 120, filter: "blur(30px)", scale: 0.9 },
+      { opacity: 1, y: 0, filter: "blur(0px)", scale: 1, duration: 4, ease: "power4.out" },
+      "-=1.5"
+    )
+    .to(word3Ref.current, { scale: 1.05, duration: 4 }); // 最后的重音保持
+
+    // 4. 描述文字 (伴随出现)
     tl.fromTo(descRef.current,
       { opacity: 0, y: 40 },
-      { opacity: 1, y: 0, duration: 2.5, ease: "power2.out" },
-      "-=2"
+      { opacity: 1, y: 0, duration: 3, ease: "power2.out" },
+      "-=3"
     );
 
-    // 最后的长留白缓冲，确保滚动不会突兀结束
-    tl.to({}, { duration: 4 });
+    // 5. 缓冲区 (Buffer - 防止滚动结束时太突然)
+    tl.to({}, { duration: 6 });
 
   }, { scope: containerRef });
 
@@ -103,7 +98,7 @@ export default function Story() {
         className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,106,74,0.1)_0%,transparent_70%)] pointer-events-none opacity-0 will-change-transform" 
       />
       
-      {/* 辅助背景纹理 - 也在动 */}
+      {/* 辅助背景纹理 */}
       <div 
         ref={gridRef}
         className="absolute inset-0 opacity-0 pointer-events-none will-change-transform"
