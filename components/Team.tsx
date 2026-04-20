@@ -4,104 +4,69 @@ import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
 const TEAM = [
-  { name: "张明", role: "创意总监", desc: "前 Apple 设计团队成员，10 年品牌数字化经验。擅长将抽象概念转化为可触碰的视觉体验。" },
-  { name: "李薇", role: "技术负责人", desc: "全栈工程师，WebGL 与动效架构专家。代码洁癖患者，追求每一行代码的优雅与性能。" },
-  { name: "王浩", role: "动效设计师", desc: "前 Awwwards 评委，GSAP 社区核心贡献者。让每一帧动画都有呼吸感和节奏感。" },
-  { name: "陈雪", role: "UX 研究员", desc: "认知心理学硕士，深谙用户行为模式。用数据驱动的洞察优化每一个交互细节。" },
+  { name: "Alex Rivers", role: "Creative Director", desc: "主导视觉叙事与品牌战略，确保每一个像素都具备灵魂。" },
+  { name: "Sarah Chen", role: "Tech Lead", desc: "精通 GSAP 与 WebGL，将不可能的交互逻辑转化为流畅的现实。" },
+  { name: "Marc Weber", role: "Motion Architect", desc: "专注于滚动动力学与物理模拟，赋予数字空间生命力。" },
 ];
 
 export default function Team() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const watermarkRef = useRef<HTMLSpanElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
+  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useGSAP(() => {
-    if (!sectionRef.current) return;
+    if (!containerRef.current) return;
 
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: 1.2,
+        trigger: containerRef.current,
+        start: "top top",
+        end: "+=3000",
+        pin: true,
+        scrub: 1,
       }
     });
 
-    // 1. Constant Motion (Principle 3)
-    tl.fromTo(watermarkRef.current,
-      { x: "-5%", scale: 1 },
-      { x: "5%", scale: 1.05, ease: "none" }
-    );
+    tl.from(".team-title", { opacity: 0, y: 50, duration: 2 });
 
-    // 2. Staggered Entry
-    gsap.from(".team-header", {
-      opacity: 0,
-      y: 50,
-      duration: 1.4,
-      ease: "power3.out",
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top 65%",
+    TEAM.forEach((member, i) => {
+      const item = itemsRef.current[i];
+      if (!item) return;
+
+      tl.fromTo(item, 
+        { opacity: 0, scale: 0.9, filter: "blur(10px)", visibility: "hidden" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", visibility: "visible", duration: 3 }
+      );
+      
+      tl.to({}, { duration: 4 });
+
+      if (i < TEAM.length - 1) {
+        tl.to(item, { opacity: 0, scale: 1.1, filter: "blur(10px)", duration: 3, onComplete: () => gsap.set(item, { visibility: "hidden" }) });
       }
     });
 
-    gsap.from(".team-card", {
-      opacity: 0,
-      y: 40,
-      stagger: 0.1,
-      duration: 1.2,
-      ease: "power3.out",
-      scrollTrigger: {
-        trigger: ".team-grid",
-        start: "top 70%",
-      }
-    });
-  }, { scope: sectionRef });
+  }, { scope: containerRef });
 
   return (
-    <section
-      id="team"
-      ref={sectionRef}
-      className="relative py-32 md:py-48 px-6 md:px-16 overflow-hidden"
-      style={{ background: "var(--bg-light)", color: "#1a1a1a" }}
-    >
-      {/* Background Watermark Parallax */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-        <span 
-          ref={watermarkRef}
-          className="text-[30vw] font-black text-black/[0.03] tracking-tighter uppercase leading-none whitespace-nowrap will-change-transform"
-        >
-          TEAM 团队核心
-        </span>
-      </div>
-
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="team-header mb-20 md:mb-28 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-          <div>
-            <p className="text-label mb-5" style={{ color: "var(--accent)" }}>核心团队</p>
-            <h2 className="text-display !text-[#1a1a1a]">
-              背后的<br /><span className="italic text-black/40">人</span>
-            </h2>
-          </div>
-          <p className="text-black/40 text-sm md:text-base font-light max-w-md leading-relaxed">
-            我们是一群对数字工艺有执念的人。每个成员都在各自领域拥有深厚积累，共同追求极致。
-          </p>
+    <section ref={containerRef} className="relative h-screen bg-black text-white overflow-hidden border-t border-white/10">
+      <div className="max-w-7xl mx-auto h-full flex flex-col items-center justify-center relative z-10 px-6">
+        <div className="team-title absolute top-24 left-12">
+          <span className="text-label text-accent mb-4 block">Our Team / 核心成员</span>
+          <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
+            幕后<span className="text-white/20 italic">推手</span>
+          </h2>
         </div>
 
-        <div className="team-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {TEAM.map((member, i) => (
+        <div className="relative w-full max-w-4xl h-96 flex items-center justify-center">
+          {TEAM.map((m, i) => (
             <div
-              key={i}
-              className="team-card group bg-black/[0.015] border border-black/[0.06] rounded-xl p-8 hover:border-black/20 hover:bg-black/[0.03] transition-all duration-700 cursor-none hover-target"
+              key={m.name}
+              ref={(el) => { itemsRef.current[i] = el; }}
+              className="absolute inset-0 flex flex-col items-center justify-center text-center opacity-0 invisible"
             >
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#ff6b4a]/20 to-[#ff9090]/20 mb-6 flex items-center justify-center text-2xl font-black text-[#1a1a1a]/40 group-hover:scale-110 group-hover:from-[#ff6b4a]/40 group-hover:to-[#ff9090]/40 transition-all duration-500">
-                {member.name[0]}
-              </div>
-              <h3 className="text-xl font-bold text-[#1a1a1a] tracking-tight mb-1 group-hover:text-[color:var(--accent)] transition-colors duration-500">
-                {member.name}
-              </h3>
-              <p className="text-[10px] uppercase tracking-widest text-black/30 mb-4">{member.role}</p>
-              <p className="text-black/45 text-sm font-light leading-relaxed group-hover:text-black/65 transition-colors duration-500">
-                {member.desc}
+              <h3 className="text-6xl md:text-8xl font-black text-white tracking-tighter mb-4">{m.name}</h3>
+              <span className="text-accent font-mono text-sm mb-8 tracking-[0.5em] uppercase">{m.role}</span>
+              <p className="text-white/40 text-xl md:text-2xl font-light leading-relaxed max-w-2xl mx-auto">
+                {m.desc}
               </p>
             </div>
           ))}

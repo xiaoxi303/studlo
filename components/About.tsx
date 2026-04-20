@@ -2,66 +2,85 @@
 
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
-import TextReveal from "./TextReveal";
 
 export default function About() {
   const sectionRef = useRef<HTMLElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     if (!sectionRef.current) return;
 
-    gsap.from(".about-item", {
+    gsap.from(textRef.current, {
+      opacity: 0,
+      y: 100,
+      duration: 1.5,
+      ease: "power4.out",
       scrollTrigger: {
         trigger: sectionRef.current,
-        start: "top 75%",
-      },
-      y: 50,
-      opacity: 0,
-      duration: 1,
-      stagger: 0.15,
-      ease: "power3.out"
+        start: "top 70%",
+      }
     });
 
-    gsap.to(".parallax-img", {
+    gsap.to(".parallax-bg", {
+      y: -100,
+      ease: "none",
       scrollTrigger: {
         trigger: sectionRef.current,
         start: "top bottom",
         end: "bottom top",
         scrub: true,
-      },
-      y: 100,
-      ease: "none"
+      }
     });
   }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} className="py-32 px-6 md:px-20 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 md:gap-24">
-      <div className="flex-1 space-y-8 w-full">
-        <h2 className="about-item text-4xl md:text-6xl font-bold tracking-tight">
-          重新定义 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400">交互体验</span>
-        </h2>
-        <div className="about-item w-full h-[1px] bg-white/10"></div>
-        <div className="about-item">
-          <TextReveal 
-            text="我在设计与工程之间架起桥梁，将深厚的技术积淀与对美学的执着追求相结合，赋予产品鲜活的生命力。" 
-            className="text-xl md:text-2xl text-gray-300 leading-relaxed font-light" 
-          />
-        </div>
-        <p className="about-item text-lg text-gray-500">
-          专注于 Next.js、GSAP 与 Tailwind CSS。致力于追求极致性能与无缝微交互。
-        </p>
+    <section 
+      ref={sectionRef} 
+      className="relative py-32 md:py-64 bg-black text-white px-6 md:px-16 overflow-hidden border-t border-white/10"
+    >
+      {/* Parallax Background Text */}
+      <div className="parallax-bg absolute top-0 left-0 w-full h-full flex items-center justify-center opacity-[0.03] pointer-events-none select-none">
+        <span className="text-[30vw] font-black tracking-tighter uppercase">PHILOSOPHY</span>
       </div>
 
-      <div className="flex-1 w-full relative h-[400px] md:h-[600px] rounded-[2rem] overflow-hidden group border border-white/10">
-        <div className="absolute inset-0 bg-blue-500/10 group-hover:bg-transparent transition-colors duration-700 z-10 mix-blend-overlay"></div>
-        <div className="parallax-img absolute -top-[15%] -bottom-[15%] left-0 right-0 bg-[#0a0a0a] flex items-center justify-center scale-110">
-          <div className="w-full h-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-[#050505] to-[#050505] relative">
-            <div className="absolute inset-0 flex items-center justify-center">
-               <div className="w-48 h-48 rounded-full border border-white/5 flex items-center justify-center animate-[spin_20s_linear_infinite]">
-                 <div className="w-32 h-32 rounded-full border border-blue-500/30 flex items-center justify-center animate-[spin_10s_linear_infinite_reverse]">
-                    <span className="text-white/20 font-bold tracking-widest text-sm uppercase">探索界限</span>
-                 </div>
-               </div>
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="flex flex-col lg:flex-row items-start gap-20">
+          <div className="lg:w-1/2">
+            <span className="text-label text-accent mb-6 block">Our Mission / 我们的使命</span>
+            <h2 ref={textRef} className="text-4xl md:text-7xl font-black tracking-tighter leading-[0.9]">
+              重新定义<br />
+              <span className="text-white/20">数字交互的</span><br />
+              极致边界
+            </h2>
+          </div>
+          
+          <div className="lg:w-1/2 space-y-12">
+            <p className="text-xl md:text-2xl text-white/60 font-light leading-relaxed">
+              我们相信，优秀的数字体验不应只是视觉的堆砌，而应该是技术与叙事的完美交响。在 Studio，我们将最前沿的工程标准与对美学的无尽追求相结合。
+            </p>
+            
+            <div className="grid grid-cols-2 gap-8">
+              <div>
+                <span className="block text-accent font-mono text-xs mb-2">/ 01</span>
+                <h4 className="text-xl font-bold mb-4">工程至上</h4>
+                <p className="text-sm text-white/40 leading-relaxed">
+                  以 120FPS 为基准的动效性能，确保每一个交互都如丝般顺滑。
+                </p>
+              </div>
+              <div>
+                <span className="block text-accent font-mono text-xs mb-2">/ 02</span>
+                <h4 className="text-xl font-bold mb-4">品牌叙事</h4>
+                <p className="text-sm text-white/40 leading-relaxed">
+                  用滚动驱动的视觉语言，为每一个品牌量身打造独一无二的数字身份。
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-8 border-t border-white/10">
+              <a href="#projects" className="group flex items-center gap-4 cursor-none hover-target">
+                <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-white group-hover:text-accent transition-colors duration-500">Explore our works / 探索案例</span>
+                <div className="w-12 h-px bg-white/20 group-hover:bg-accent group-hover:w-20 transition-all duration-500" />
+              </a>
             </div>
           </div>
         </div>

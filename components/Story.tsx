@@ -5,95 +5,55 @@ import { gsap, useGSAP } from "@/lib/gsap";
 
 export default function Story() {
   const containerRef = useRef<HTMLElement>(null);
-  const word1Ref = useRef<HTMLHeadingElement>(null);
-  const word2Ref = useRef<HTMLHeadingElement>(null);
-  const word3Ref = useRef<HTMLHeadingElement>(null);
-  const descRef = useRef<HTMLParagraphElement>(null);
-  const bgGlowRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
+  const s1 = useRef<HTMLDivElement>(null);
+  const s2 = useRef<HTMLDivElement>(null);
+  const s3 = useRef<HTMLDivElement>(null);
+  const s4 = useRef<HTMLDivElement>(null);
+  const s5 = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     if (!containerRef.current) return;
 
-    // ─── 核心：超长轴主时间轴 (The Master Timeline) ───
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: "+=8000", // 增加到 8000，让操作更从容
+        end: "+=10000", // 极大增加行程，支持 5 段叙事
         pin: true,
-        scrub: 1.2,
+        scrub: 1,
       }
     });
 
-    // ─── 核心技巧：永远让背景在动 (Principle 2) ───
-    // 将 duration 拉长到 25，确保覆盖整个 Timeline 每一个角落
-    tl.to(bgGlowRef.current, {
-      scale: 3,
-      opacity: 0.25,
-      rotate: 60,
-      x: "15%",
-      y: "15%",
-      duration: 25,
-      ease: "none",
-    }, 0);
+    const sections = [s1.current, s2.current, s3.current, s4.current, s5.current];
 
-    tl.to(gridRef.current, {
-      opacity: 0.15,
-      scale: 1.2,
-      y: -150,
-      duration: 25,
-      ease: "none",
-    }, 0);
+    sections.forEach((section, i) => {
+      // 1. 进场：从完全隐藏到出现，增加 3 个单位的行程
+      tl.fromTo(section, 
+        { opacity: 0, y: 150, filter: "blur(20px)", visibility: "hidden" }, 
+        { opacity: 1, y: 0, filter: "blur(0px)", visibility: "visible", duration: 3 }
+      );
+      
+      // 2. 驻留：在屏幕中心保持一段距离，增加 5 个单位的“静止感”
+      tl.to({}, { duration: 5 }); 
 
-    // ─── 内容衔接：所有内容“接进去”，没有任何空白段 ───
-    
-    // 1. 第一句：进入 -> 停留 -> 退场
-    tl.fromTo(word1Ref.current,
-      { opacity: 0, y: 150, filter: "blur(30px)", scale: 0.8 },
-      { opacity: 1, y: 0, filter: "blur(0px)", scale: 1, duration: 4, ease: "power2.out" },
-      0
-    )
-    .to(word1Ref.current, { y: -30, opacity: 0.7, duration: 2 })
-    .to(word1Ref.current, { opacity: 0, y: -100, filter: "blur(20px)", duration: 2, ease: "power2.in" }, "+=0.5");
-
-    // 2. 第二句：提前开始衔接 ("-=")
-    tl.fromTo(word2Ref.current,
-      { opacity: 0, y: 120, filter: "blur(30px)", scale: 0.9 },
-      { opacity: 1, y: 0, filter: "blur(0px)", scale: 1, duration: 4, ease: "power2.out" },
-      "-=1.5" 
-    )
-    .to(word2Ref.current, { y: -30, opacity: 0.7, duration: 2 })
-    .to(word2Ref.current, { opacity: 0, y: -100, filter: "blur(20px)", duration: 2, ease: "power2.in" }, "+=0.5");
-
-    // 3. 第三句：最后的沉浸 (高潮段)
-    tl.fromTo(word3Ref.current,
-      { opacity: 0, y: 120, filter: "blur(30px)", scale: 0.9 },
-      { opacity: 1, y: 0, filter: "blur(0px)", scale: 1, duration: 4, ease: "power2.out" },
-      "-=1.5"
-    )
-    // 根据用户要求：拉长高潮时间
-    .to(word3Ref.current, { 
-      scale: 1.08, 
-      opacity: 1, 
-      duration: 6 // 🔥 拉长
-    })
-    // 根据用户要求：淡化但不停留
-    .to(word3Ref.current, {
-      opacity: 0.4,
-      scale: 1.1,
-      duration: 3
+      // 3. 退场：如果是最后一段则不退场，否则向上滑走并隐藏
+      if (i < sections.length - 1) {
+        tl.to(section, { 
+          opacity: 0, 
+          y: -150, 
+          filter: "blur(20px)", 
+          duration: 3,
+          onComplete: () => gsap.set(section, { visibility: "hidden" })
+        });
+      }
     });
 
-    // 4. 描述文字：伴随最后的高潮
-    tl.fromTo(descRef.current,
-      { opacity: 0, y: 40 },
-      { opacity: 1, y: 0, duration: 3, ease: "power2.out" },
-      "-=8" // 提前出现，覆盖 word3 的整个过程
-    );
-
-    // 最后的安全缓冲，背景和 word3 都在微动
-    tl.to({}, { duration: 5 });
+    // Background floating logic
+    tl.to(".story-bg-text", {
+      yPercent: -50,
+      ease: "none",
+      duration: tl.totalDuration()
+    }, 0);
 
   }, { scope: containerRef });
 
@@ -101,36 +61,101 @@ export default function Story() {
     <section
       id="story"
       ref={containerRef}
-      className="h-screen w-full bg-[#0a0a0a] flex items-center justify-center relative overflow-hidden"
+      className="relative w-full h-screen bg-black text-white overflow-hidden flex items-center justify-center border-t border-white/10"
     >
-      {/* 永远在动的背景底层 */}
-      <div 
-        ref={bgGlowRef}
-        className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,106,74,0.12)_0%,transparent_70%)] pointer-events-none opacity-0 will-change-transform" 
-      />
-      
-      {/* 辅助背景纹理 - 也在动 */}
-      <div 
-        ref={gridRef}
-        className="absolute inset-0 opacity-0 pointer-events-none will-change-transform"
-        style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)", backgroundSize: "60px 60px" }}
-      />
-
-      <div className="relative text-center px-6 w-full z-10 h-[40vh] flex items-center justify-center">
-        <h2 ref={word1Ref} className="absolute text-display text-white/90 opacity-0 will-change-transform tracking-tighter whitespace-nowrap">
-          我们追求<span className="font-black text-white">极简</span>与<span className="font-black text-white">深邃</span>。
-        </h2>
-        <h2 ref={word2Ref} className="absolute text-display text-white/90 opacity-0 will-change-transform tracking-tighter whitespace-nowrap">
-          剔除繁杂，<span className="italic text-white/50">只留下纯粹。</span>
-        </h2>
-        <h2 ref={word3Ref} className="absolute text-display text-white opacity-0 will-change-transform tracking-tighter whitespace-nowrap">
-          让每一次滚动，都是一场
-          <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-pink"> 视觉沉浸</span>。
-        </h2>
-        <p ref={descRef} className="absolute top-[85%] text-muted text-sm md:text-base font-light tracking-wide max-w-xl mx-auto leading-relaxed opacity-0">
-          我们是 Studio —— 一间追求极致数字工艺的创意团队，专注于构建令人屏息的品牌数字体验。
-        </p>
+      {/* Parallax Background Text */}
+      <div className="story-bg-text absolute inset-0 flex flex-col items-center justify-center opacity-[0.01] pointer-events-none select-none text-[25vw] font-black leading-none uppercase">
+        <span>Experience</span>
+        <span>Narrative</span>
+        <span>Dynamics</span>
       </div>
+
+      <div className="absolute top-20 left-10 text-[10px] text-accent font-mono tracking-[0.5em] uppercase vertical-text">
+        CORE_CHRONICLES / 核心编年史
+      </div>
+
+      <div className="relative z-10 max-w-6xl w-full px-6 text-center">
+        
+        {/* Section 1: Intro */}
+        <div ref={s1} className="absolute inset-0 flex flex-col items-center justify-center opacity-0">
+          <span className="text-label text-accent mb-6">/ 01 ORIGIN</span>
+          <h2 className="text-display mb-8">
+            从<span className="text-white/40 italic">静态</span>到<br />
+            全域流动的演进
+          </h2>
+          <p className="max-w-2xl mx-auto text-white/40 text-xl font-light leading-relaxed">
+            网页不应该是死板的容器，而应该是一个活着的实体。我们致力于赋予数字界面生命力。
+          </p>
+        </div>
+
+        {/* Section 2: Technical */}
+        <div ref={s2} className="absolute inset-0 flex flex-col items-center justify-center opacity-0">
+          <span className="text-label text-accent mb-6">/ 02 PRECISION</span>
+          <h2 className="text-display mb-8">
+            <span className="text-accent">1ms</span> 的延迟<br />
+            都是对艺术的亵渎
+          </h2>
+          <div className="grid grid-cols-2 gap-20 mt-8">
+            <div className="text-left border-l border-white/10 pl-8">
+              <span className="block text-5xl font-black tabular-nums">0.0<span className="text-sm text-accent">ms</span></span>
+              <span className="text-[10px] text-white/20 uppercase tracking-[0.3em] mt-2 block">Jitter Threshold</span>
+            </div>
+            <div className="text-left border-l border-white/10 pl-8">
+              <span className="block text-5xl font-black tabular-nums">60<span className="text-sm text-accent">bit</span></span>
+              <span className="text-[10px] text-white/20 uppercase tracking-[0.3em] mt-2 block">Animation Depth</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 3: Vision */}
+        <div ref={s3} className="absolute inset-0 flex flex-col items-center justify-center opacity-0">
+          <span className="text-label text-accent mb-6">/ 03 VISION</span>
+          <h2 className="text-display mb-8">
+            构建<span className="text-accent">全沉浸式</span><br />
+            品牌数字化剧场
+          </h2>
+          <p className="max-w-2xl mx-auto text-white/40 text-xl font-light leading-relaxed">
+            每一个项目都是一场精心编排的戏剧。用户不再是旁观者，而是故事的驱动者。
+          </p>
+        </div>
+
+        {/* Section 4: Engineering */}
+        <div ref={s4} className="absolute inset-0 flex flex-col items-center justify-center opacity-0">
+          <span className="text-label text-accent mb-6">/ 04 ENGINEERING</span>
+          <h2 className="text-display mb-8">
+            用<span className="text-white/40 italic">代码</span>重写<br />
+            设计的物理规则
+          </h2>
+          <div className="mt-8 flex justify-center gap-4">
+            <div className="px-6 py-4 bg-white/[0.03] border border-white/10 font-mono text-xs text-accent">
+              {"{ friction: 0.1, lerp: 0.05 }"}
+            </div>
+            <div className="px-6 py-4 bg-white/[0.03] border border-white/10 font-mono text-xs text-white/40">
+              {"{ smoothWheel: true }"}
+            </div>
+          </div>
+        </div>
+
+        {/* Section 5: The End */}
+        <div ref={s5} className="absolute inset-0 flex flex-col items-center justify-center opacity-0">
+          <span className="text-label text-accent mb-6">/ 05 FUTURE</span>
+          <h2 className="text-display mb-8">
+            加入我们，<br />
+            开启<span className="text-accent">数字新纪元</span>
+          </h2>
+          <div className="flex flex-col items-center gap-6">
+            <div className="w-px h-24 bg-gradient-to-b from-accent to-transparent" />
+            <span className="text-[10px] text-white/20 uppercase tracking-[0.5em]">Scroll to connect</span>
+          </div>
+        </div>
+
+      </div>
+
+      <style jsx>{`
+        .vertical-text {
+          writing-mode: vertical-rl;
+        }
+      `}</style>
     </section>
   );
 }

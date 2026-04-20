@@ -3,116 +3,75 @@
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
-const MARQUEE_TEXT = "极致体验 · 沉浸设计 · 品牌叙事 · 动效工程 · 视觉交响 · 数字工艺 · ";
-
-const QUOTES = [
-  {
-    quote: "他们将我们的品牌愿景转化为了一种令人窒息的数字体验——这不只是一个网站，这是我们品牌的灵魂。",
-    author: "陈总",
-    role: "某科技品牌创始人",
-  },
-  {
-    quote: "与市面上其他团队完全不同。他们真正理解动效背后的叙事逻辑，而不只是让东西动起来。",
-    author: "林总监",
-    role: "某奢侈品牌数字总监",
-  },
-  {
-    quote: "上线后，我们的用户停留时长翻倍。极致的沉浸感让用户自然而然地往下滚动，直到读完所有内容。",
-    author: "张总",
-    role: "某 SaaS 产品 CEO",
-  },
+const REVIEWS = [
+  { text: "Studio 彻底改变了我们的品牌叙事方式。他们的动效逻辑不仅仅是美观，更是极具战略价值的表达。", author: "John Doe", company: "CEO, TechFlow" },
+  { text: "在数字化转型的道路上，我们从未见过如此精准的工程实现。120FPS 的承诺真的被兑现了。", author: "Jane Smith", company: "Creative Lead, Aura" },
+  { text: "他们的设计不仅让人惊叹，更让人沉浸。这种叙事深度在当前的 Web 领域非常罕见。", author: "Mark Wilson", company: "Founder, Nexus" },
 ];
 
 export default function Testimonials() {
-  const sectionRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
+  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useGSAP(() => {
-    if (!sectionRef.current) return;
+    if (!containerRef.current) return;
 
-    // Content entry with scrub for fluid control
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: 1.2,
+        trigger: containerRef.current,
+        start: "top top",
+        end: "+=3000",
+        pin: true,
+        scrub: 1,
       }
     });
 
-    tl.from(".quote-label", {
-      opacity: 0,
-      y: 100,
-      scale: 0.9,
-      duration: 2,
-    }, 0);
+    tl.from(".testi-title", { opacity: 0, y: 50, duration: 2 });
 
-    tl.from(".quote-card", {
-      opacity: 0,
-      y: 80,
-      scale: 0.95,
-      stagger: 0.5,
-      duration: 3,
-    }, 0.5);
+    REVIEWS.forEach((review, i) => {
+      const item = itemsRef.current[i];
+      if (!item) return;
 
-  }, { scope: sectionRef });
+      tl.fromTo(item, 
+        { opacity: 0, x: 100, filter: "blur(10px)", visibility: "hidden" },
+        { opacity: 1, x: 0, filter: "blur(0px)", visibility: "visible", duration: 3 }
+      );
+      
+      tl.to({}, { duration: 4 });
+
+      if (i < REVIEWS.length - 1) {
+        tl.to(item, { opacity: 0, x: -100, filter: "blur(10px)", duration: 3, onComplete: () => gsap.set(item, { visibility: "hidden" }) });
+      }
+    });
+
+  }, { scope: containerRef });
 
   return (
-    <section ref={sectionRef} className="relative bg-[#0a0a0a] overflow-hidden">
-      {/* Upper Marquee (Constant Motion) */}
-      <div className="py-6 border-y border-white/[0.04] overflow-hidden">
-        <div className="animate-marquee whitespace-nowrap flex">
-          {[...Array(4)].map((_, i) => (
-            <span key={i} className="text-5xl md:text-7xl font-black tracking-tighter text-white/[0.03] uppercase mx-4 flex-shrink-0">
-              {MARQUEE_TEXT}
-            </span>
-          ))}
+    <section ref={containerRef} className="relative h-screen bg-black text-white overflow-hidden border-t border-white/10">
+      <div className="max-w-7xl mx-auto h-full flex flex-col items-center justify-center relative z-10 px-6">
+        <div className="testi-title absolute top-24 left-12">
+          <span className="text-label text-accent mb-4 block">Testimonials / 客户评价</span>
+          <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
+            来自<span className="text-white/20 italic">伙伴</span>的反馈
+          </h2>
         </div>
-      </div>
 
-      {/* Testimonials Content */}
-      <div className="py-32 md:py-48 px-6 md:px-16">
-        <div className="max-w-7xl mx-auto">
-          <div className="quote-label mb-20 md:mb-28">
-            <p className="text-label text-accent mb-5">客户评价</p>
-            <h2 className="text-display text-white">
-              他们<span className="italic text-white/40">这样说</span>
-            </h2>
-          </div>
-
-          <div className="quotes-grid grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {QUOTES.map((q, i) => (
-              <div
-                key={i}
-                className="quote-card group border border-white/[0.06] bg-white/[0.01] rounded-xl p-8 md:p-10 hover:border-white/20 hover:bg-white/[0.03] transition-all duration-700 cursor-none hover-target flex flex-col justify-between"
-              >
-                <div>
-                  <div className="text-3xl text-accent/30 font-serif mb-6 group-hover:text-accent/60 transition-colors duration-500">&ldquo;</div>
-                  <p className="text-white/70 text-base md:text-lg font-light leading-relaxed mb-10 group-hover:text-white/90 transition-colors duration-500">
-                    {q.quote}
-                  </p>
-                </div>
-                <div className="flex items-center gap-4 border-t border-white/[0.06] pt-6">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent/40 to-accent-pink/40 flex-shrink-0 flex items-center justify-center text-white text-sm font-bold">
-                    {q.author[0]}
-                  </div>
-                  <div>
-                    <p className="text-white text-sm font-medium">{q.author}</p>
-                    <p className="text-white/30 text-xs tracking-widest uppercase mt-0.5">{q.role}</p>
-                  </div>
-                </div>
+        <div className="relative w-full max-w-5xl h-96 flex items-center justify-center">
+          {REVIEWS.map((r, i) => (
+            <div
+              key={r.author}
+              ref={(el) => { itemsRef.current[i] = el; }}
+              className="absolute inset-0 flex flex-col items-center justify-center text-center opacity-0 invisible"
+            >
+              <span className="text-accent text-6xl font-serif mb-8">“</span>
+              <p className="text-2xl md:text-4xl font-light leading-relaxed max-w-3xl mx-auto mb-12 italic">
+                {r.text}
+              </p>
+              <div className="flex flex-col items-center">
+                <span className="text-xl font-bold">{r.author}</span>
+                <span className="text-[10px] text-white/30 uppercase tracking-[0.3em] mt-2">{r.company}</span>
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Lower Marquee (Reverse Constant Motion) */}
-      <div className="py-6 border-y border-white/[0.04] overflow-hidden">
-        <div className="animate-marquee-slow whitespace-nowrap flex" style={{ direction: "rtl" }}>
-          {[...Array(4)].map((_, i) => (
-            <span key={i} className="text-4xl md:text-5xl font-black tracking-tighter text-white/[0.025] uppercase mx-4 flex-shrink-0">
-              {MARQUEE_TEXT}
-            </span>
+            </div>
           ))}
         </div>
       </div>

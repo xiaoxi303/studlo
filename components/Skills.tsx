@@ -4,53 +4,72 @@ import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
 const SKILLS = [
-  "Next.js App Router",
-  "GSAP Animations",
-  "TailwindCSS",
-  "WebGL",
-  "TypeScript",
-  "Performance Optimization",
-  "Creative Coding",
-  "React Server Components"
+  { name: "FRONTEND_CORE", list: "Next.js / React 19 / TypeScript", desc: "构建现代化、类型安全且极具扩展性的 Web 应用架构。" },
+  { name: "MOTION_ENGINE", list: "GSAP / Framer Motion / CSS", desc: "掌控每一帧的细节，从微交互到宏大的滚动叙事。" },
+  { name: "CREATIVE_TECH", list: "Three.js / WebGL / Canvas", desc: "突破 DOM 限制，在浏览器中创造惊艳的 3D 视觉体验。" },
 ];
 
 export default function Skills() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const marqueeRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
+  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useGSAP(() => {
-    if (!marqueeRef.current) return;
-    
-    const tween = gsap.to(marqueeRef.current, {
-      xPercent: -50,
-      ease: "none",
-      duration: 30,
-      repeat: -1,
+    if (!containerRef.current) return;
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top top",
+        end: "+=3000",
+        pin: true,
+        scrub: 1,
+      }
     });
 
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener("mouseenter", () => gsap.to(tween, { timeScale: 0.2, duration: 0.5 }));
-      container.addEventListener("mouseleave", () => gsap.to(tween, { timeScale: 1, duration: 0.5 }));
-    }
+    tl.from(".skills-title", { opacity: 0, x: -50, duration: 2 });
+
+    SKILLS.forEach((skill, i) => {
+      const item = itemsRef.current[i];
+      if (!item) return;
+
+      tl.fromTo(item, 
+        { opacity: 0, y: 100, visibility: "hidden" },
+        { opacity: 1, y: 0, visibility: "visible", duration: 3 }
+      );
+      
+      tl.to({}, { duration: 4 });
+
+      if (i < SKILLS.length - 1) {
+        tl.to(item, { opacity: 0, y: -100, filter: "blur(10px)", duration: 3, onComplete: () => gsap.set(item, { visibility: "hidden" }) });
+      }
+    });
+
   }, { scope: containerRef });
 
   return (
-    <section ref={containerRef} className="py-20 bg-[#050505] overflow-hidden border-t border-white/5 relative z-10">
-      <div className="relative w-full flex items-center">
-        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#050505] to-transparent z-20 pointer-events-none"></div>
-        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#050505] to-transparent z-20 pointer-events-none"></div>
-        
-        <div ref={marqueeRef} className="flex whitespace-nowrap w-max will-change-transform">
-          {[...SKILLS, ...SKILLS].map((skill, index) => (
-            <div 
-              key={index} 
-              className="px-8 flex items-center group cursor-none hover-target"
+    <section ref={containerRef} className="relative h-screen bg-black text-white overflow-hidden border-t border-white/10">
+      <div className="max-w-7xl mx-auto h-full flex flex-col items-center justify-center relative z-10 px-6">
+        <div className="skills-title absolute top-24 left-12">
+          <span className="text-label text-accent mb-4 block">Tech Stack / 技术栈</span>
+          <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
+            核心<span className="text-white/20 italic">武装</span>
+          </h2>
+        </div>
+
+        <div className="relative w-full max-w-4xl h-96 flex items-center justify-center">
+          {SKILLS.map((s, i) => (
+            <div
+              key={s.name}
+              ref={(el) => { itemsRef.current[i] = el; }}
+              className="absolute inset-0 flex flex-col items-center justify-center text-center opacity-0 invisible"
             >
-              <span className="text-4xl md:text-7xl font-black text-transparent bg-clip-text bg-white/5 group-hover:bg-gradient-to-r group-hover:from-blue-500 group-hover:to-cyan-400 transition-all duration-700 uppercase tracking-tighter cursor-pointer">
-                {skill}
-              </span>
-              <span className="ml-16 text-blue-500/20 text-3xl md:text-5xl">•</span>
+              <span className="text-accent font-mono text-xs mb-6 tracking-[0.5em]">{s.name}</span>
+              <h3 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-8 uppercase">
+                {s.list}
+              </h3>
+              <p className="text-white/40 text-xl font-light leading-relaxed max-w-2xl mx-auto">
+                {s.desc}
+              </p>
             </div>
           ))}
         </div>

@@ -3,65 +3,79 @@
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
-const TECH_STACK = [
-  { name: "Next.js", desc: "React 全栈框架，SSR/SSG 首选", category: "框架" },
-  { name: "GSAP", desc: "专业级动画引擎，毫秒级精度", category: "动效" },
-  { name: "Three.js", desc: "WebGL 3D 渲染，沉浸式视觉", category: "3D" },
-  { name: "Lenis", desc: "丝滑平滑滚动，原生般触感", category: "滚动" },
-  { name: "TailwindCSS", desc: "原子化 CSS，极速开发", category: "样式" },
-  { name: "Framer Motion", desc: "声明式动画，React 原生体验", category: "动效" },
-  { name: "TypeScript", desc: "强类型保障，零运行时错误", category: "语言" },
-  { name: "Vercel", desc: "边缘网络部署，全球 CDN 加速", category: "部署" },
+const SERVICES = [
+  { title: "CREATIVE_STRATEGY", desc: "从品牌核心出发，构建具有叙事深度的数字战略。我们不只是设计界面，我们是在定义交互的灵魂。" },
+  { title: "MOTION_DESIGN", desc: "将动态思维贯穿设计始终。利用 GSAP 与物理引擎，让每一个像素的运动都符合美学直觉与品牌调性。" },
+  { title: "TECH_ENGINEERING", desc: "极致的前端性能压榨。采用 Next.js 与 WebGL，确保在海量动效下依然保持 120FPS 的极致流畅。" },
 ];
 
 export default function Services() {
-  const sectionRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
+  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useGSAP(() => {
-    if (!sectionRef.current) return;
+    if (!containerRef.current) return;
 
-    gsap.from(".tech-header", {
-      opacity: 0, y: 50, duration: 1.4, ease: "power3.out",
-      scrollTrigger: { trigger: sectionRef.current, start: "top 65%" }
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top top",
+        end: "+=3000",
+        pin: true,
+        scrub: 1,
+      }
     });
 
-    gsap.from(".tech-item", {
-      opacity: 0, y: 30, stagger: 0.06, duration: 1, ease: "power3.out",
-      scrollTrigger: { trigger: ".tech-grid", start: "top 70%" }
+    // 衔接：初始进场
+    tl.from(".services-title", { opacity: 0, scale: 0.9, filter: "blur(10px)", duration: 2 });
+
+    SERVICES.forEach((_, i) => {
+      const item = itemsRef.current[i];
+      if (!item) return;
+
+      // 叙事推进
+      tl.fromTo(item, 
+        { opacity: 0, y: 100, visibility: "hidden" },
+        { opacity: 1, y: 0, visibility: "visible", duration: 3 }
+      );
+      
+      tl.to({}, { duration: 4 }); // 驻留
+
+      if (i < SERVICES.length - 1) {
+        tl.to(item, { opacity: 0, y: -100, filter: "blur(10px)", duration: 3, onComplete: () => gsap.set(item, { visibility: "hidden" }) });
+      }
     });
-  }, { scope: sectionRef });
+
+    // 衔接：整体退场，为下一个板块腾出空间
+    tl.to(containerRef.current, { opacity: 0.5, scale: 0.95, duration: 2 }, "+=1");
+
+  }, { scope: containerRef });
 
   return (
-    <section ref={sectionRef} className="relative bg-[#0a0a0a] py-32 md:py-48 px-6 md:px-16 overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        <div className="tech-header mb-20 md:mb-28 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-          <div>
-            <p className="text-label text-accent mb-5">技术栈</p>
-            <h2 className="text-display text-white">
-              我们的<br /><span className="text-white/40">武器库</span>
-            </h2>
-          </div>
-          <p className="text-muted text-sm md:text-base font-light max-w-md leading-relaxed">
-            我们精心挑选每一项技术，确保它在性能、开发体验和最终呈现之间达到完美平衡。没有冗余，只有精锐。
-          </p>
+    <section 
+      ref={containerRef} 
+      className="relative h-screen bg-black text-white overflow-hidden border-t border-white/10"
+    >
+      <div className="max-w-7xl mx-auto h-full flex flex-col items-center justify-center relative z-10 px-6">
+        <div className="services-title absolute top-24 left-12">
+          <span className="text-label text-accent mb-4 block">Our Expertise / 专业领域</span>
+          <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
+            核心<span className="text-white/20 italic">领域</span>
+          </h2>
         </div>
 
-        <div className="tech-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {TECH_STACK.map((tech, i) => (
+        <div className="relative w-full max-w-4xl h-96 flex items-center justify-center">
+          {SERVICES.map((s, i) => (
             <div
-              key={i}
-              className="tech-item group bg-white/[0.02] border border-white/[0.06] rounded-xl p-6 md:p-8 hover:border-white/20 hover:bg-white/[0.04] transition-all duration-700 cursor-none hover-target"
+              key={s.title}
+              ref={(el) => { itemsRef.current[i] = el; }}
+              className="absolute inset-0 flex flex-col items-center justify-center text-center opacity-0 invisible"
             >
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-[10px] uppercase tracking-widest text-accent/60 border border-accent/20 px-2 py-0.5 rounded-full">
-                  {tech.category}
-                </span>
-              </div>
-              <h3 className="text-xl md:text-2xl font-bold text-white tracking-tight mb-3 group-hover:text-accent transition-colors duration-500">
-                {tech.name}
+              <h3 className="text-5xl md:text-8xl font-black text-white tracking-tighter mb-8 group-hover:text-accent transition-colors duration-500">
+                {s.title}
               </h3>
-              <p className="text-white/35 text-sm font-light leading-relaxed group-hover:text-white/55 transition-colors duration-500">
-                {tech.desc}
+              <p className="text-white/40 text-xl md:text-2xl font-light leading-relaxed max-w-2xl mx-auto">
+                {s.desc}
               </p>
             </div>
           ))}

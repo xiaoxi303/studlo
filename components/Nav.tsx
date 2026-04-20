@@ -4,11 +4,10 @@ import { useRef, useEffect } from "react";
 import { gsap } from "@/lib/gsap";
 
 const NAV_LINKS = [
-  { label: "关于", href: "#story" },
-  { label: "服务", href: "#services" },
-  { label: "作品", href: "#projects" },
-  { label: "流程", href: "#process" },
-  { label: "团队", href: "#team" },
+  { label: "概览", href: "#story" },
+  { label: "能力", href: "#services" },
+  { label: "案例", href: "#projects" },
+  { label: "方法", href: "#process" },
 ];
 
 export default function Nav() {
@@ -18,17 +17,12 @@ export default function Nav() {
   useEffect(() => {
     if (!navRef.current) return;
 
-    gsap.fromTo(navRef.current,
-      { opacity: 0, y: -20 },
-      { opacity: 1, y: 0, duration: 1.2, ease: "power3.out", delay: 3.5 }
-    );
-
     const handleScroll = () => {
       const currentY = window.scrollY;
       if (currentY > lastScrollY.current && currentY > 100) {
-        gsap.to(navRef.current, { y: -80, duration: 0.4, ease: "power2.inOut" });
+        gsap.to(navRef.current, { y: -100, duration: 0.5, ease: "power4.inOut" });
       } else {
-        gsap.to(navRef.current, { y: 0, duration: 0.4, ease: "power2.out" });
+        gsap.to(navRef.current, { y: 0, duration: 0.5, ease: "power4.out" });
       }
       lastScrollY.current = currentY;
     };
@@ -40,18 +34,24 @@ export default function Nav() {
   return (
     <nav
       ref={navRef}
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-5 opacity-0 mix-blend-difference"
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-8"
     >
-      <a href="#" className="text-white font-black tracking-tight text-xl uppercase cursor-none hover-target">
-        Studio<span className="text-white/40">.</span>
-      </a>
+      <div className="flex items-center gap-4">
+        <a href="#" className="text-white font-black tracking-tighter text-2xl uppercase cursor-none hover-target">
+          STUDIO<span className="text-accent">.</span>
+        </a>
+        <div className="hidden lg:block w-[1px] h-4 bg-white/10 mx-2" />
+        <span className="hidden lg:block text-[10px] text-white/30 uppercase tracking-[0.3em] font-bold">
+          v2.0 / 2024
+        </span>
+      </div>
 
-      <div className="hidden md:flex items-center gap-8">
+      <div className="hidden md:flex items-center gap-10 bg-black/40 backdrop-blur-md border border-white/5 px-8 py-3 rounded-full">
         {NAV_LINKS.map((link) => (
           <a
             key={link.label}
             href={link.href}
-            className="text-white/60 text-xs uppercase tracking-[0.15em] hover:text-white transition-colors duration-300 cursor-none hover-target hover-line"
+            className="text-white/40 text-[10px] uppercase tracking-[0.2em] font-bold hover:text-white transition-colors duration-300 cursor-none hover-target"
           >
             {link.label}
           </a>
@@ -60,9 +60,13 @@ export default function Nav() {
 
       <a
         href="#contact"
-        className="text-xs uppercase tracking-[0.15em] text-white/60 border border-white/20 px-5 py-2 rounded-full hover:bg-white hover:text-black transition-all duration-500 cursor-none hover-target"
+        className="group relative px-6 py-2 overflow-hidden rounded-sm cursor-none hover-target"
       >
-        联系我们
+        <div className="absolute inset-0 bg-accent transition-transform duration-500 translate-y-[101%] group-hover:translate-y-0" />
+        <span className="relative z-10 text-[10px] uppercase tracking-[0.2em] font-bold text-white group-hover:text-black transition-colors duration-500">
+          联系我们
+        </span>
+        <div className="absolute inset-0 border border-white/20 group-hover:border-accent transition-colors duration-500" />
       </a>
     </nav>
   );
