@@ -74,6 +74,14 @@ export default function WhySection() {
             <p className="text-white/30 text-xl md:text-2xl font-light leading-relaxed max-w-3xl">
               {reason.desc}
             </p>
+
+            {/* 精密圆环装饰 (The Circle from lenis.dev) */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-20">
+              <div className="w-24 h-24 rounded-full border border-accent animate-pulse" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-1 h-1 rounded-full bg-accent" />
+              </div>
+            </div>
             
             <div className="absolute bottom-12 right-12 flex items-center gap-4">
               <span className="text-[10px] text-white/10 font-mono">STEP_0{i+1}</span>
