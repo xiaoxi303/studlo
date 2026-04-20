@@ -14,7 +14,7 @@ export default function Hero() {
   useGSAP(() => {
     if (!containerRef.current) return;
 
-    // 1. Entry Animation
+    // 1. Entry Animation (Initial load)
     const entryTl = gsap.timeline({ delay: 3 });
     entryTl
       .fromTo(line1Ref.current,
@@ -27,56 +27,55 @@ export default function Hero() {
         "-=1"
       );
 
-    // 2. 核心时间轴 (Scroll Progress Control)
+    // 2. 核心：超长轴主时间轴 (Scroll Progress Control)
     const scrollTl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: "+=5000", // 长轴
+        end: "+=5000", // 再次拉长
         pin: true,
         scrub: 1.2,
       }
     });
 
-    // ─── 核心修复：背景永动 (Duration 贯穿全场) ───
+    // ─── 核心：背景永远在动 (Principle 2) ───
+    // duration 设置为 25，确保即便后期增加内容，背景也不会停止
     scrollTl.to(bgRef.current, {
       scale: 2.2,
-      opacity: 0.3,
-      rotate: 25,
-      x: "5%",
-      y: "5%",
+      opacity: 0.35,
+      x: "-10%",
+      y: "-10%",
+      rotate: 20,
       ease: "none",
-      duration: 20, 
+      duration: 25, 
     }, 0);
 
-    // ─── 内容流程 (Hold -> Fade -> Exit) ───
+    // ─── 内容控制 (Principle 3: No gaps) ───
     scrollTl
-      .to(line1Ref.current, { scale: 1.05, duration: 4 }, 0) // Hold + 微动
-      .to(line1Ref.current, {
-        opacity: 0.3,
-        y: -100,
-        filter: "blur(20px)",
-        duration: 3,
-        ease: "power2.inOut"
-      }, 4) // 开始淡出
-      .to(line1Ref.current, {
-        opacity: 0,
-        y: -200,
-        filter: "blur(40px)",
-        duration: 3,
-        ease: "power2.in"
-      }, 7) // 彻底消失
+      // 保持阶段 (Hold)
+      .to(line1Ref.current, { scale: 1.08, duration: 4 }, 0)
       
-      .to([taglineRef.current, badgeRef.current, scrollHintRef.current], {
+      // 变化退出 (Exit)
+      .to(line1Ref.current, {
+        y: -200,
         opacity: 0,
+        scale: 0.8,
+        filter: "blur(40px)",
+        duration: 6,
+        ease: "power2.in"
+      }, 4)
+      
+      // 次要元素退场
+      .to([taglineRef.current, badgeRef.current, scrollHintRef.current], {
         y: -150,
-        stagger: 0.2,
+        opacity: 0,
+        stagger: 0.3,
         duration: 5,
         ease: "power2.in"
-      }, 3); // 提前联动退场
+      }, 3.5);
 
-    // 缓冲区
-    scrollTl.to({}, { duration: 8 });
+    // 缓冲时间
+    scrollTl.to({}, { duration: 6 });
 
   }, { scope: containerRef });
 
@@ -85,9 +84,10 @@ export default function Hero() {
       ref={containerRef}
       className="relative w-full h-screen flex flex-col items-center justify-center bg-[#0a0a0a] overflow-hidden"
     >
+      {/* 永远在动的背景 */}
       <div 
         ref={bgRef}
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,106,74,0.2)_0%,transparent_70%)] pointer-events-none opacity-5 scale-100 will-change-transform" 
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,106,74,0.18)_0%,transparent_70%)] pointer-events-none opacity-5 scale-100 will-change-transform" 
       />
 
       <div
