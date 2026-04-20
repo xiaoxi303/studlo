@@ -33,7 +33,7 @@ export default function Projects() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: "+=5000",
+        end: () => window.innerWidth < 768 ? "+=2500" : "+=5000",
         pin: true,
         scrub: 1,
       }

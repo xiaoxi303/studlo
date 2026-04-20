@@ -29,9 +29,9 @@ export default function HUD() {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-[100] font-mono text-[9px] uppercase tracking-widest p-6 flex flex-col justify-between">
+    <div className="fixed inset-0 pointer-events-none z-[100] font-mono text-[9px] uppercase tracking-widest p-4 md:p-6 flex flex-col justify-between">
       {/* Top HUD */}
-      <div className="flex justify-between items-start opacity-30">
+      <div className="hidden md:flex justify-between items-start opacity-30">
         <div className="flex gap-8">
           <div>
             <span className="block text-white/40 mb-1">Status</span>
@@ -49,7 +49,7 @@ export default function HUD() {
       </div>
 
       {/* Middle HUD (Optional lines or markers) */}
-      <div className="absolute top-1/2 left-6 -translate-y-1/2 flex flex-col gap-12 opacity-20">
+      <div className="absolute top-1/2 left-6 -translate-y-1/2 hidden md:flex flex-col gap-12 opacity-20">
         <div className="w-px h-12 bg-white" />
         <div className="w-px h-12 bg-white" />
         <div className="w-px h-12 bg-white" />
@@ -57,7 +57,7 @@ export default function HUD() {
 
       {/* Bottom HUD */}
       <div className="flex justify-between items-end">
-        <div className="flex gap-12 items-end">
+        <div className="hidden md:flex gap-12 items-end">
           <div className="flex flex-col gap-1">
             <span className="text-white/40">Performance</span>
             <div className="flex items-center gap-2">
@@ -72,12 +72,12 @@ export default function HUD() {
           </div>
         </div>
 
-        <div className="flex flex-col items-end gap-2">
+        <div className="flex flex-col items-end gap-2 w-full md:w-auto">
           <div className="flex items-center gap-3">
-            <span className="text-white/40">Scrolled</span>
-            <span className="text-accent text-lg font-bold tabular-nums">{scrollProgress}%</span>
+            <span className="text-[8px] text-white/40">PROGRESS</span>
+            <span className="text-accent text-base md:text-lg font-bold tabular-nums">{scrollProgress}%</span>
           </div>
-          <div className="w-32 h-[2px] bg-white/10 relative overflow-hidden">
+          <div className="w-full md:w-32 h-[2px] bg-white/10 relative overflow-hidden">
             <div 
               className="absolute inset-0 bg-accent transition-transform duration-300 origin-left" 
               style={{ transform: `scaleX(${scrollProgress / 100})` }}

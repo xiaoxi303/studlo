@@ -18,7 +18,7 @@ export default function Story() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: "+=10000", // 极大增加行程，支持 5 段叙事
+        end: () => window.innerWidth < 768 ? "+=4000" : "+=10000", 
         pin: true,
         scrub: 1,
       }

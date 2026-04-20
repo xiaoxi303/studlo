@@ -21,7 +21,7 @@ export default function Features() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: "+=4000",
+        end: () => window.innerWidth < 768 ? "+=1500" : "+=4000",
         pin: true,
         scrub: 1,
       }

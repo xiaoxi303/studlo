@@ -19,7 +19,7 @@ export default function WhySection() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: "+=4000",
+        end: () => window.innerWidth < 768 ? "+=3000" : "+=10000", // 移动端缩短行程
         pin: true,
         scrub: 1,
       }
@@ -58,7 +58,7 @@ export default function WhySection() {
         {REASONS.map((reason, i) => (
           <div
             key={i}
-            className="why-card absolute w-[85vw] h-[60vh] md:w-[70vw] md:h-[50vh] bg-[#080808] border border-white/10 rounded-sm p-12 md:p-24 flex flex-col justify-center transition-colors duration-700 hover:border-accent/40"
+            className="why-card absolute w-[90vw] h-[70vh] md:w-[70vw] md:h-[50vh] bg-[#080808] border border-white/10 rounded-sm p-8 md:p-24 flex flex-col justify-center transition-colors duration-700 hover:border-accent/40"
             style={{ zIndex: i + 1 }}
           >
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
